@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Customer Management System - Customer List</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+
+</head>
+
+<body>
+  <h1>Customer List</h1>
+  <table id="customerTable">
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Street</th>
+      <th>Address</th>
+      <th>City</th>
+      <th>State</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Actions</th>
+    </tr>
+  </table>
+
+  <button onclick="logout()">Logout</button>
+
+  <script>
+    // Ensure the token is available (You might have stored it in a variable while logging in)
+    const token = "YOUR_BEARER_TOKEN_HERE";
+
+    async function fetchCustomers() {
+      const response = await fetch("https://qa2.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=get_customer_list", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (response.status === 200) {
+        const data = await response.json();
+        displayCustomers(data);
+      } else {
+        console.log("Failed to fetch customer list.");
+      }
+    }
+
+    function displayCustomers(customers) {
+      const customerTable = document.getElementById("customerTable");
+      customers.forEach((customer) => {
+        const row = customerTable.insertRow();
+        row.insertCell().innerText = customer.first_name;
+        row.insertCell().innerText = customer.last_name;
+        row.insertCell().innerText = customer.street;
+        row.insertCell().innerText = customer.address;
+        row.insertCell().innerText = customer.city;
+        row.insertCell().innerText = customer.state;
+        row.insertCell().innerText = customer.email;
+        row.insertCell().innerText = customer.phone;
+        row.insertCell().innerHTML = `<button onclick="deleteCustomer('${customer.uuid}')">Delete</button>
+                                       <button onclick="updateCustomer('${customer.uuid}')">Update</button>`;
+      });
+    }
+
+    function logout() {
+      // Implement the logout logic here, e.g., clearing the token and redirecting to the Login Screen
+    }
+
+    // Fetch customers on page load
+    window.onload = fetchCustomers;
+  </script>
+</body>
+
+</html>
